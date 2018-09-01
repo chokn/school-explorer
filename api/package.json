@@ -1,0 +1,44 @@
+{
+  "name": "ipeds_api",
+  "version": "1.0.0",
+  "description": "IPEDS graphql api",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server": "^2.0.5",
+    "better-sqlite3": "^4.1.4",
+    "graphql": "^0.13.2",
+    "jest": "^23.5.0",
+    "sql-template-strings": "^2.2.2"
+  },
+  "jest": {
+    "testResultsProcessor": "./jestTrxProcessor",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js,jsx}",
+      "!**/node_modules/**",
+      "!**/vendor/**",
+      "!**/lib/**",
+      "!**/__test__/**",
+      "!**/jest*.js",
+      "!index.js",
+      "!**/coverage/*",
+      "!**/coverage/lcov-report/*",
+      "!**/tools/**"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "cobertura"
+    ]
+  },
+  "devDependencies": {
+    "jest-trx-results-processor": "0.0.7"
+  }
+}
