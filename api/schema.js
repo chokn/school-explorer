@@ -50,7 +50,6 @@ const resolvers = {
     Query: {
       degreesBySchool(obj, args, context, info) {
         let features = getDegreesBySchool(args)
-        console.log("length of returned features", features.length)
         return {
           type: "FeatureCollection",
           features

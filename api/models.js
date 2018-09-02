@@ -22,7 +22,6 @@ function getDegreesBySchool(args) {
     let schoolFeatures = schoolsDegreesData.map(element => {
         let longitude = parseFloat(element.longitude)
         let latitude = parseFloat(element.latitude)
-        console.log(`lon: ${longitude}, lat: ${latitude}`)
         return {
             type: "Feature", 
             geometry: {
