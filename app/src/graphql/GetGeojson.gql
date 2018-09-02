@@ -1,0 +1,19 @@
+query {
+  degreesBySchool {
+    type
+    features {
+      type
+      geometry{
+        type
+        coordinates
+      }
+      properties {
+        id	
+        name
+        degreeCount
+        lon
+        lat
+      }
+    }
+  }
+}
