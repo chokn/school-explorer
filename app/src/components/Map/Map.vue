@@ -2,7 +2,7 @@
 <l-map :zoom.sync="zoom" :center.sync="center">
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
     <v-marker-cluster  :options="clusterOptions" @clusterclick="click()">
-        <l-geo-json v-if="geojson" :geojson="geojson"></l-geo-json>
+        <l-geo-json v-if="geojson" :geojson="geojson" :options="geoJsonOptions"></l-geo-json>
     </v-marker-cluster>
 </l-map>
 </template>
@@ -11,6 +11,22 @@
 import L from 'leaflet'
 import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
 import Vue2LeafletMarkercluster from 'vue2-leaflet-markercluster'
+import Vue from 'vue'
+import MapPopup from './MapPopup.vue'
+
+function onEachFeature (feature, layer) {
+  let popupContent = Vue.extend(MapPopup)
+  let popup = new popupContent({ 
+    propsData: {
+      name: feature.properties.name,
+      schoolId: feature.properties.id,
+      degreeCount: feature.properties.degreeCount
+    }
+  })
+  layer.bindPopup(popup.$mount().$el)
+}
+
+
 
 delete L.Icon.Default.prototype._getIconUrl
 L.Icon.Default.imagePath = ''
@@ -39,13 +55,9 @@ export default {
 
     },
     data () {
-        let geoJsonOptions = {
-            onEachFeature: function (feature, layer) {
-            layer.getLatLng = function() { return this.getBounds().getCenter() }
-            layer.setLatLng = function() { }
-            layer._latlng = layer.getLatLng();
-            }
-        }
+        // let geoJsonOptions = {
+        //     onEachFeature: onEachFeature
+        // }
 
     return {
         /* eslint no-undef: "off"*/
@@ -53,25 +65,13 @@ export default {
         center: L.latLng(33.64566, -86.6836),
         url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
         attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-        geoJsonOptions,
+        geoJsonOptions: {
+            onEachFeature: onEachFeature
+        },
         clusterOptions: {}
         }
     },
     computed: {
-        // zoom () {
-        //     if (this.focusedFeatureId) {
-        //         return 3    
-        //     } else {
-        //         return 13
-        //     }
-        // },
-        // center () {
-        //     if (!this.focusedFeatureId) {
-        //         return L.latLng(33.64566, -86.6836)
-        //     } else {
-        //         return L.LatLng(23, -100)
-        //     }
-        // }
     },
     methods: {
       click: function () {
@@ -87,7 +87,6 @@ export default {
             let coords = focusedFeature.geometry.coordinates
             this.center = L.latLng(coords[1], coords[0])
         }
-        
     },
 }
 </script>
