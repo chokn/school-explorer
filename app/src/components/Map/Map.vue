@@ -1,5 +1,5 @@
 <template>
-<l-map :zoom="zoom" :center="center">
+<l-map :zoom.sync="zoom" :center.sync="center">
     <l-tile-layer :url="url" :attribution="attribution"></l-tile-layer>
     <v-marker-cluster  :options="clusterOptions" @clusterclick="click()">
         <l-geo-json v-if="geojson" :geojson="geojson"></l-geo-json>
@@ -26,6 +26,10 @@ export default {
             default: null
             
         },
+        focusedFeatureId: {
+            type: Number,
+            default: null
+        }
     },
     components: {
         LMap,
@@ -53,16 +57,42 @@ export default {
         clusterOptions: {}
         }
     },
+    computed: {
+        // zoom () {
+        //     if (this.focusedFeatureId) {
+        //         return 3    
+        //     } else {
+        //         return 13
+        //     }
+        // },
+        // center () {
+        //     if (!this.focusedFeatureId) {
+        //         return L.latLng(33.64566, -86.6836)
+        //     } else {
+        //         return L.LatLng(23, -100)
+        //     }
+        // }
+    },
     methods: {
       click: function () {
-        console.log("clusterclick")
-
       }
-    }
+    },
+    watch: {
+        // eslint-disable-next-line
+        focusedFeatureId(newId, _oldValue) {
+            // Set zoom and center to selected school
+            this.zoom = 12
+            let focusedFeature = this.geojson.features.find(item => item.properties.id === newId)
+            // geojson geometry is in [longitude, latitude] order
+            let coords = focusedFeature.geometry.coordinates
+            this.center = L.latLng(coords[1], coords[0])
+        }
+        
+    },
 }
 </script>
 
-<style>
+<style scoped>
   @import "~leaflet/dist/leaflet.css";
   @import "~leaflet.markercluster/dist/MarkerCluster.css";
   @import "~leaflet.markercluster/dist/MarkerCluster.Default.css";

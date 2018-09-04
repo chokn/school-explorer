@@ -1,94 +1,106 @@
 <template>
   <v-app>
     <v-navigation-drawer
-      persistent
-      :mini-variant="miniVariant"
-      :clipped="clipped"
-      v-model="drawer"
-      enable-resize-watcher
       fixed
+      v-model="drawer"
       app
     >
-      <v-list>
-        <v-list-tile
-          value="true"
-          v-for="(item, i) in items"
-          :key="i"
-        >
-          <v-list-tile-action>
-            <v-icon v-html="item.icon"></v-icon>
-          </v-list-tile-action>
-          <v-list-tile-content>
-            <v-list-tile-title v-text="item.title"></v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-      </v-list>
+     
     </v-navigation-drawer>
     <v-toolbar
-      app
-      :clipped-left="clipped"
-    >
-      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
-      <v-btn icon @click.stop="miniVariant = !miniVariant">
-        <v-icon v-html="miniVariant ? 'chevron_right' : 'chevron_left'"></v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="clipped = !clipped">
-        <v-icon>web</v-icon>
-      </v-btn>
-      <v-btn icon @click.stop="fixed = !fixed">
-        <v-icon>remove</v-icon>
-      </v-btn>
-      <v-toolbar-title v-text="title"></v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn icon @click.stop="rightDrawer = !rightDrawer">
-        <v-icon>menu</v-icon>
-      </v-btn>
-    </v-toolbar>
-    <v-content>
-      <leaflet-map :geojson='geojson'></leaflet-map>
-    </v-content>
-    <v-navigation-drawer
-      temporary
-      :right="right"
-      v-model="rightDrawer"
+      color="blue-grey"
+      dark
       fixed
       app
+      clipped-left
+      clipped-right
     >
-      <v-list>
-        <v-list-tile @click="right = !right">
-          <v-list-tile-action>
-            <v-icon>compare_arrows</v-icon>
-          </v-list-tile-action>
-          <v-list-tile-title>Switch drawer (click me)</v-list-tile-title>
-        </v-list-tile>
-      </v-list>
+      <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
+      <v-toolbar-title>College talent finder</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-toolbar-side-icon @click.stop="drawerRight = !drawerRight"></v-toolbar-side-icon>
+    </v-toolbar>
+
+    <v-content>
+      <Map v-if="geojson" :geojson='geojson' :focused-feature-id="selectedSchoolId"></Map>
+    </v-content>
+    <v-navigation-drawer
+      fixed
+      v-model="drawerRight"
+      right
+      clipped
+      app
+      width=500
+    >
+      <v-toolbar dense flat class="transparent">
+          <v-text-field
+            v-model="search"
+            prepend-icon="search"
+            label="Search"
+            single-line
+            hide-details
+          >
+          </v-text-field>
+      </v-toolbar>
+      <v-data-table
+        v-if="schoolsTableData"
+        disable-initial-sort
+        :headers="schoolsTableHeaders"
+        :items="schoolsTableData"
+        :search="search"
+        @input="selectSchool"
+      >
+      <template slot="items" slot-scope="props">
+        <tr :active="props.selected" @click="props.selected = !props.selected">
+          <td class="text-xs-left">{{ props.item.id }}</td>
+          <td class="text-xs-left">{{ props.item.name }}</td>
+          <td class="text-xs-right">{{ props.item.degreeCount }}</td>
+        </tr>
+      </template>
+      <template slot="no-data">
+        <v-alert :value="true" color="error" icon="warning">
+          Sorry, nothing to display here :(
+        </v-alert>
+      </template>
+        
+      </v-data-table>
     </v-navigation-drawer>
+        
   </v-app>
 </template>
 
 <script>
 // import HelloWorld from './components/HelloWorld'
-import LeafletMap from './components/Map/LeafletMap'
+import Map from './components/Map/Map.vue'
 import GET_GEOJSON from './graphql/GetGeojson.gql'
 export default {
   name: 'App',
   components: {
-    LeafletMap
+    Map
   },
   data () {
     return {
-      clipped: false,
-      drawer: true,
-      fixed: false,
-      items: [{
-        icon: 'bubble_chart',
-        title: 'Inspire'
-      }],
-      miniVariant: false,
-      right: true,
-      rightDrawer: false,
-      title: 'Vuetify.js',
-      geojson: null
+      drawer: false,
+      drawerRight: false,
+      title: 'School explorer',
+      geojson: null,
+      schoolsTableHeaders: [
+        {
+          text: "ID",
+          value: "id",
+          sortable: false
+        },
+        {
+          text: "School name",
+          value: "name"
+        },
+        {
+          text: "Degree count",
+          value: 'degreeCount'
+        }
+      ],
+      search: '',
+      selectedSchoolId: null
     }
   },
   apollo: {
@@ -96,6 +108,25 @@ export default {
       query: GET_GEOJSON,
       update: data => data.degreesBySchool
     }
-  }
+  },
+  computed: {
+    schoolsTableData() {
+      if(!this.geojson) return null
+
+      return this.geojson.features.map(element => {
+        let propertiesObject = element.properties
+        return {
+          id: propertiesObject.id,
+          name: propertiesObject.name,
+          degreeCount: propertiesObject.degreeCount
+        }
+      })
+    }
+  },
+  methods: {
+    selectSchool(args) {
+      this.selectedSchoolId=args[0].id
+    }
+  },
 }
 </script>
