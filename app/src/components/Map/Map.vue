@@ -9,7 +9,7 @@
 
 <script>
 import L from 'leaflet'
-import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet';
+import { LMap, LTileLayer, LGeoJson } from 'vue2-leaflet'
 import Vue2LeafletMarkercluster from 'vue2-leaflet-markercluster'
 import Vue from 'vue'
 import MapPopup from './MapPopup.vue'
@@ -25,7 +25,6 @@ function onEachFeature (feature, layer) {
   })
   layer.bindPopup(popup.$mount().$el)
 }
-
 
 
 delete L.Icon.Default.prototype._getIconUrl
