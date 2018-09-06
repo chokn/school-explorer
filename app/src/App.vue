@@ -32,10 +32,10 @@
                   <v-btn flat value="all">
                     all
                   </v-btn>
-                  <v-btn flat value="male">
+                  <v-btn flat value="men">
                     male
                   </v-btn>
-                  <v-btn flat value="female">
+                  <v-btn flat value="women">
                     female
                   </v-btn>
             </v-btn-toggle>
@@ -172,7 +172,12 @@ export default {
   apollo: {
     geojson: {
       query: GET_GEOJSON,
-      update: data => data.degreesBySchool
+      update: data => data.degreesBySchool,
+      variables() {
+        return {
+          gender: this.gender
+        }
+      }
     }
   },
   computed: {
@@ -193,6 +198,6 @@ export default {
     selectSchool(args) {
       this.selectedSchoolId=args[0].id
     }
-  },
+  }
 }
 </script>
