@@ -42,3 +42,63 @@ it('gets all schools', async () => {
 
 
   })
+
+  
+it('gets degree counts by gender', async () => {
+  const queryMen = `
+    query {
+      degreesBySchool(gender: men) {
+        features {
+          properties {
+            degreeCount
+          }
+        }
+      }
+    }
+  `
+  
+  let resultsMen = await graphql(schema, queryMen) 
+  expect(resultsMen.errors).toBeFalsy()
+  expect(resultsMen.data.degreesBySchool).toBeTruthy()
+
+  const queryWomen = `
+    query {
+      degreesBySchool(gender: women) {
+        features {
+          properties {
+            degreeCount
+          }
+        }
+      }
+    }
+  `
+
+  let resultsWomen = await graphql(schema, queryWomen) 
+
+  const queryAll = `
+    query {
+      degreesBySchool(gender: all) {
+        features {
+          properties {
+            degreeCount
+          }
+        }
+      }
+    }
+  `
+  let resultsAll = await graphql(schema, queryAll) 
+  
+  let degreesAll = resultsAll.data.degreesBySchool.features.reduce( (a,b) => {
+    return a+b.degreeCount
+  }, 0)
+
+  let degreesMen = resultsMen.data.degreesBySchool.features.reduce( (a,b) => {
+    return a+b.degreeCount
+  }, 0)
+
+  let degreesWomen = resultsWomen.data.degreesBySchool.features.reduce( (a,b) => {
+    return a+b.degreeCount
+  }, 0)
+
+  expect(degreesAll).toEqual(degreesMen + degreesWomen)
+})

@@ -17,6 +17,7 @@
     "sql-template-strings": "^2.2.2"
   },
   "jest": {
+    "testEnvironment": "node",
     "testResultsProcessor": "./jestTrxProcessor",
     "collectCoverage": true,
     "collectCoverageFrom": [

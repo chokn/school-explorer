@@ -8,6 +8,12 @@ const { getDegreesBySchool } = require('./models')
 const typeDefs = `
   scalar Coordinates
 
+  enum Gender {
+    men
+    women
+    all
+  }
+
   type PointGeometry {
     type: String!
     coordinates: Coordinates!
@@ -29,7 +35,7 @@ const typeDefs = `
     features: [PointObject]
   }
   type Query {
-    degreesBySchool: FeatureCollection
+    degreesBySchool(gender: Gender = "all"): FeatureCollection
   }
 `;
 
