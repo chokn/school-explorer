@@ -37,10 +37,6 @@ it('gets all schools', async () => {
     expect(result.errors).toBeFalsy()
     expect(result.data.degreesBySchool).toBeTruthy()
     expect(result.data.degreesBySchool.features[0].geometry.coordinates[1]).toBeTruthy()
-    console.log(result)
-
-
-
   })
 
   
@@ -101,4 +97,52 @@ it('gets degree counts by gender', async () => {
   }, 0)
 
   expect(degreesAll).toEqual(degreesMen + degreesWomen)
+})
+
+it('gets degree counts by minimum degree', async () => {
+  let degreeTypes = ['bachelors', 'masters', 'doctorate']
+  let degreeCounts = []
+  degreeTypes.forEach(type => {
+    let query = `
+    query {
+      degreesBySchool(minDegree: ${type}) {
+        features {
+          properties {
+            degreeCount
+          }
+        }
+      }
+    }
+    `
+    let results = graphql(schema, query)
+    
+    degreeCounts.push(results)
+  });
+
+  let queryAll =     `query {
+    degreesBySchool {
+      features {
+        properties {
+          degreeCount
+        }
+      }
+    }
+  }
+  `
+
+  let resultsAll = graphql(schema, queryAll)
+  degreeCounts.push(resultsAll)
+  degreeCounts = await Promise.all(degreeCounts)
+  
+  degreeCounts = degreeCounts.map( resultsObject => {
+    return resultsObject.data.degreesBySchool.features.reduce( (a,b) => {
+      return a + b.properties.degreeCount
+    },0)
+  })
+  expect(degreeCounts).toHaveLength(degreeTypes.length + 1)
+  let total = degreeCounts.slice(-1)
+  total = total[0]
+  expect(total).toBeGreaterThanOrEqual(degreeCounts.slice(0,-1)
+    .reduce( (a,b) => a + b, 0)
+  )  // let resultsBachelors = await graphql(schema, query) 
 })

@@ -17,17 +17,39 @@ function getDegreesBySchool(args) {
     } else {
         gender = '%'
     }
+
+    let minDegree = 0
+    if (args && args.minDegree) {
+        switch (args.minDegree) {
+            case "bachelors":
+                minDegree = 5
+                break;
+            case "masters":
+                minDegree = 7
+                break;
+            case "doctorate":
+                minDegree = 17;
+                break;
+            default:
+                minDegree = 0;
+                break;
+        }
+    }
+
+
     const query = `
         SELECT schools.UNITID as id, INSTNM AS name, LONGITUD as longitude, LATITUDE as latitude, sum(degrees) as degree_count
         from schools LEFT JOIN degree_completions on schools.UNITID = degree_completions.UNITID
-        where degree_completions.gender LIKE @gender
+        LEFT JOIN award_levels on award_levels.Codevalue = degree_completions.AWLEVEL
+        where degree_completions.gender LIKE @gender AND degree_completions.AWLEVEL >= @minDegree
         group by schools.UNITID
         having degree_count is not null
         order by degree_count desc
     `
 
     const schoolsDegreesData = db.prepare(query).all({
-        gender
+        gender,
+        minDegree
     })
     let schoolFeatures = schoolsDegreesData.map(element => {
         let longitude = parseFloat(element.longitude)

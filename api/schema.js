@@ -14,6 +14,13 @@ const typeDefs = `
     all
   }
 
+  enum Degree {
+    bachelors
+    masters
+    doctorate
+    none
+  }
+
   type PointGeometry {
     type: String!
     coordinates: Coordinates!
@@ -35,7 +42,7 @@ const typeDefs = `
     features: [PointObject]
   }
   type Query {
-    degreesBySchool(gender: Gender = "all"): FeatureCollection
+    degreesBySchool(gender: Gender = "all", minDegree: Degree): FeatureCollection
   }
 `;
 
