@@ -63,3 +63,29 @@ it('returns degrees with minimum degree level', async() => {
 
 })
 
+it('generates a good list string', () => {
+    let test = models.generateSqlList(3)
+    expect(test).toBe('AND degree_completions.race_ethnicity IN (?,?,?)')
+
+    let test2 = models.generateSqlList(0)
+    expect(test2).toBe('')
+})
+
+it('gets races', async () => {
+    let rnoList = ['White', 'Asian']
+    let resultsWhiteAsian = models.getDegreesBySchool({races: rnoList})
+    expect(resultsWhiteAsian).toBeTruthy()
+    let whiteAndAsianCount = getTotalDegrees(resultsWhiteAsian)
+    expect(whiteAndAsianCount).toBeTruthy()
+    let resultsBlack = models.getDegreesBySchool({races: ['Black or African American']})
+    expect(resultsBlack).toBeTruthy()
+    let blackCount = getTotalDegrees(resultsBlack)
+    expect(whiteAndAsianCount).toBeGreaterThan(blackCount)
+    
+})
+
+it('gets races from args', () => {
+    args = {races: ['unknown']}
+    let raceArray = models.getRacesFromArg(args)
+    expect(raceArray[0]).toBe('Race/ethnicity unknown')
+})

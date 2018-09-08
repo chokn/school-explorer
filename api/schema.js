@@ -42,7 +42,10 @@ const typeDefs = `
     features: [PointObject]
   }
   type Query {
-    degreesBySchool(gender: Gender = "all", minDegree: Degree): FeatureCollection
+    degreesBySchool(
+      gender: Gender = "all",
+      minDegree: Degree,
+      raceEthnicity: [String!]): FeatureCollection
   }
 `;
 
