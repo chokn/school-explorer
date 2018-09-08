@@ -28,7 +28,7 @@
         </v-list-tile>
         <v-list-tile>
           <v-list-tile-content>
-            <v-btn-toggle v-model="gender">
+            <v-btn-toggle v-model="gender" mandatory>
                   <v-btn flat value="all">
                     all
                   </v-btn>
@@ -55,13 +55,13 @@
         <v-list-tile avatar>
           <v-list-tile-content>
             <v-btn-toggle v-model="degree">
-              <v-btn flat value="ba">
+              <v-btn flat value="bachelors">
                 ba/bs
               </v-btn>
-              <v-btn flat value="ma">
+              <v-btn flat value="masters">
                 ma/ms
               </v-btn>
-              <v-btn flat value="phd">
+              <v-btn flat value="doctorate">
                 phd/md
               </v-btn>
             </v-btn-toggle>
@@ -166,7 +166,7 @@ export default {
       search: '',
       selectedSchoolId: null,
       gender: "all",
-      degree: "ba"
+      degree: "none"
     }
   },
   apollo: {
@@ -175,9 +175,12 @@ export default {
       update: data => data.degreesBySchool,
       variables() {
         return {
-          gender: this.gender
-        }
+          gender: this.gender,
+          minDegree: this.degree
       }
+      },
+      fetchPolicy: "cache-and-network",
+      debounce: 1000
     }
   },
   computed: {

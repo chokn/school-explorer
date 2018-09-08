@@ -1,5 +1,5 @@
-query($gender: Gender) {
-  degreesBySchool(gender: $gender) {
+query($gender: Gender, $minDegree: Degree) {
+  degreesBySchool(gender: $gender, minDegree: $minDegree) {
     type
     features {
       type
