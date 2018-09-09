@@ -22,8 +22,8 @@ function generateSqlList(n) {
 
 function getRacesFromArg(args) {
     let races = []
-    if (args && args.races && args.races !=='all') {
-        races = args.races
+    if (args && args.raceEthnicity && args.raceEthnicity !=='all') {
+        races = args.raceEthnicity
         let index = races.indexOf('unknown')
         if(~index) {
             races[index] = 'Race/ethnicity unknown'

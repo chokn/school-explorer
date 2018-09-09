@@ -73,11 +73,11 @@ it('generates a good list string', () => {
 
 it('gets races', async () => {
     let rnoList = ['White', 'Asian']
-    let resultsWhiteAsian = models.getDegreesBySchool({races: rnoList})
+    let resultsWhiteAsian = models.getDegreesBySchool({raceEthnicity: rnoList})
     expect(resultsWhiteAsian).toBeTruthy()
     let whiteAndAsianCount = getTotalDegrees(resultsWhiteAsian)
     expect(whiteAndAsianCount).toBeTruthy()
-    let resultsBlack = models.getDegreesBySchool({races: ['Black or African American']})
+    let resultsBlack = models.getDegreesBySchool({raceEthnicity: ['Black or African American']})
     expect(resultsBlack).toBeTruthy()
     let blackCount = getTotalDegrees(resultsBlack)
     expect(whiteAndAsianCount).toBeGreaterThan(blackCount)
@@ -85,7 +85,7 @@ it('gets races', async () => {
 })
 
 it('gets races from args', () => {
-    args = {races: ['unknown']}
+    args = {raceEthnicity: ['unknown']}
     let raceArray = models.getRacesFromArg(args)
     expect(raceArray[0]).toBe('Race/ethnicity unknown')
 })

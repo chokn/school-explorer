@@ -146,3 +146,64 @@ it('gets degree counts by minimum degree', async () => {
     .reduce( (a,b) => a + b, 0)
   )  // let resultsBachelors = await graphql(schema, query) 
 })
+
+it('gets degrees by race', async () => {
+  const raceList = [
+    "American Indian or Alaska Native",
+    "Asian",
+    "Black or African American",
+    "Hispanic or Latino",
+    "Native Hawaiian or Other Pacific Islander",
+    "White",
+    "Two or more races",
+    "Race/ethnicity unknown",
+    "Nonresident alien"
+  ]
+
+  let queryAll  = `{
+    degreesBySchool(raceEthnicity: []) {
+      features {
+        properties {
+          degreeCount
+        }
+      }
+    }
+  }
+  `
+  
+  let degreeCounts = []
+  raceList.forEach( race => {
+    let query = `
+      query {
+        degreesBySchool(raceEthnicity: ["${race}"]) {
+        features {
+          properties {
+            degreeCount
+          }
+        }
+      }}
+    `
+    let results = graphql(schema, query)
+    degreeCounts.push(results)
+  })
+
+
+  let resultsAll = graphql(schema, queryAll)
+  expect(resultsAll.errors).toBeFalsy()
+  degreeCounts.push(resultsAll)
+  degreeCounts = await Promise.all(degreeCounts)
+  
+  degreeCounts = degreeCounts.map( resultsObject => {
+    return resultsObject.data.degreesBySchool.features.reduce( (a,b) => {
+      return a + b.properties.degreeCount
+    },0)
+  })
+  expect(degreeCounts).toHaveLength(raceList.length + 1)
+  let total = degreeCounts.slice(-1)
+  total = total[0]
+  // total sum of degrees is 5,017,108
+  expect(total).toBeGreaterThanOrEqual(degreeCounts.slice(0,-1)
+    .reduce( (a,b) => a + b, 0)
+  )
+
+})
