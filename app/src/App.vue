@@ -8,6 +8,7 @@
     <Filters
       v-bind:gender.sync="gender"
       v-bind:degree.sync="degree"
+      v-bind:raceEthnicity.sync="raceEthnicity"
     >
     </Filters>
 
@@ -111,7 +112,8 @@ export default {
       search: '',
       selectedSchoolId: null,
       gender: "all",
-      degree: "none"
+      degree: "none",
+      raceEthnicity: []
     }
   },
   apollo: {
@@ -121,7 +123,8 @@ export default {
       variables() {
         return {
           gender: this.gender,
-          minDegree: this.degree
+          minDegree: this.degree,
+          raceEthnicity: this.raceEthnicity
       }
       },
       fetchPolicy: "cache-and-network",
