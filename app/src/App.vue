@@ -5,71 +5,14 @@
       v-model="drawer"
       app
     >
-      <v-toolbar flat>
-        <v-list>
-          <v-list-tile>
-            <v-list-tile-title class="title">
-              Filters
-            </v-list-tile-title>
-          </v-list-tile>
-        </v-list>
-      </v-toolbar>
-      <v-divider></v-divider>
-
-      <v-list subheader>
-        <v-subheader>Demographics</v-subheader>
-        <v-list-tile>
-          <v-list-tile-avatar>
-            <v-icon>accessibility_new</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            Gender
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile>
-          <v-list-tile-content>
-            <v-btn-toggle v-model="gender" mandatory>
-                  <v-btn flat value="all">
-                    all
-                  </v-btn>
-                  <v-btn flat value="men">
-                    male
-                  </v-btn>
-                  <v-btn flat value="women">
-                    female
-                  </v-btn>
-            </v-btn-toggle>
-          </v-list-tile-content>
-        </v-list-tile>
-
-        <v-divider></v-divider>
-        <v-subheader>Academics</v-subheader>
-        <v-list-tile>
-          <v-list-tile-avatar>
-            <v-icon>school</v-icon>
-          </v-list-tile-avatar>
-          <v-list-tile-content>
-            Minimum degree
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile avatar>
-          <v-list-tile-content>
-            <v-btn-toggle v-model="degree">
-              <v-btn flat value="bachelors">
-                ba/bs
-              </v-btn>
-              <v-btn flat value="masters">
-                ma/ms
-              </v-btn>
-              <v-btn flat value="doctorate">
-                phd/md
-              </v-btn>
-            </v-btn-toggle>
-          </v-list-tile-content>
-        </v-list-tile>
+    <Filters
+      v-bind:gender.sync="gender"
+      v-bind:degree.sync="degree"
+    >
+    </Filters>
 
 
-      </v-list>
+
     </v-navigation-drawer>
     <v-toolbar
       color="blue-grey"
@@ -86,7 +29,7 @@
     </v-toolbar>
 
     <v-content>
-      <Map v-if="geojson" :geojson='geojson' :focused-feature-id="selectedSchoolId"></Map>
+      <!-- <Map v-if="geojson" :geojson='geojson' :focused-feature-id="selectedSchoolId"></Map> -->
     </v-content>
     <v-navigation-drawer
       fixed
@@ -136,11 +79,13 @@
 <script>
 // import HelloWorld from './components/HelloWorld'
 import Map from './components/Map/Map.vue'
+import Filters from './components/Filters.vue'
 import GET_GEOJSON from './graphql/GetGeojson.gql'
 export default {
   name: 'App',
   components: {
-    Map
+    Map,
+    Filters
   },
   data () {
     return {
